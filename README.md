@@ -115,7 +115,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Check Node.js
-        uses: RafaelGSS/is-my-node-vulnerable@v1
+        uses: nodejs/is-my-node-vulnerable@v1
         with:
           node-version: "18.14.1"
 ```
@@ -125,7 +125,7 @@ Optionally you can define the platform with the argument `platform` to limit the
 ```yml
       - uses: actions/checkout@v3
       - name: Check Node.js
-        uses: RafaelGSS/is-my-node-vulnerable@v1
+        uses: nodejs/is-my-node-vulnerable@v1
         with:
           node-version: "18.14.1"
           platform: "linux"
