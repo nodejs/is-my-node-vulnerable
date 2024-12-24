@@ -4,7 +4,7 @@
   "description": "package that checks if your Node.js installation is vulnerable to known security vulnerabilities",
   "main": "index.js",
   "bin": {
-    "is-my-node-vulnerable": "./index.js"
+    "is-my-node-vulnerable": "./src/index.js"
   },
   "keywords": [
     "security",

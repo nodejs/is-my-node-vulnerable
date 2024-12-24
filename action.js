@@ -1,5 +1,5 @@
 const core = require('@actions/core')
-const { isNodeVulnerable } = require('./index')
+const { isNodeVulnerable } = require('./src/index')
 
 async function run () {
   // Inputs
