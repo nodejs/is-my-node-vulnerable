@@ -14,12 +14,14 @@ async function t () {
   assert.ok(await isNodeVulnerable('16.19.0'))
   assert.ok(await isNodeVulnerable('20.8.0'))
   assert.ok(await isNodeVulnerable('20.11.0'))
+  assert.ok(await isNodeVulnerable('23.6.0'))
 
   assert.rejects(() => isNodeVulnerable('999'), /Could not fetch version information/)
   assert.rejects(() => isNodeVulnerable('Unobtanium'), /Could not fetch version information/) // i.e. not found
   assert.rejects(() => isNodeVulnerable('25.0.0'), /Could not fetch version information/)
 
   // EOL
+  assert.ok(await isNodeVulnerable('21.0.0'))
   assert.ok(await isNodeVulnerable('19.0.0'))
   assert.ok(await isNodeVulnerable('16.0.0'))
   assert.ok(await isNodeVulnerable('17.0.0'))
