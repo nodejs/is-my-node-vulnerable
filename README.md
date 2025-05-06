@@ -83,17 +83,17 @@ This package also exports a function `isNodeVulnerable` to perform the check in 
 > The API is only supported on active Node.js versions (v18.x, v20.x, v22.x, v23.x)
 
 ```js
-const { isNodeVulnerable } = require('is-my-node-vulnerable')
+import { isNodeVulnerable } from 'is-my-node-vulnerable'
 
-isNodeVulnerable('19.0.0') // true
+await isNodeVulnerable('19.0.0') // true
 ```
 
 Optionally you can define the platform with the argument `platform` to limit the scope. The available platforms are [the same values](https://nodejs.org/api/os.html#osplatform) available in for `os.platform()`.
 
 ```js
-const { isNodeVulnerable } = require('is-my-node-vulnerable')
+import { isNodeVulnerable } from 'is-my-node-vulnerable'
 
-isNodeVulnerable('19.0.0', 'linux') // true
+await isNodeVulnerable('19.0.0', 'linux') // true
 ```
 
 [Node.js Security Database]: https://github.com/nodejs/security-wg/tree/main/vuln
