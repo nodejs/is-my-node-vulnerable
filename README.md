@@ -77,7 +77,7 @@ End-of-Life versions don't keep track of recent security releases, therefore, it
 
 ## API
 
-This package also exports a function `isNodeVulnerable` to perform the check in runtime
+This package also exports a function `isNodeVulnerable` to perform the check at runtime
 
 > [!NOTE]
 > The API is only supported on active Node.js versions (v18.x, v20.x, v22.x, v23.x)
@@ -88,7 +88,7 @@ const { isNodeVulnerable } = require('is-my-node-vulnerable')
 isNodeVulnerable('19.0.0') // true
 ```
 
-Optionally you can define the platform with the argument `platform` to limit the scope. The available platforms are [the same values](https://nodejs.org/api/os.html#osplatform) available in for `os.platform()`.
+Optionally, you can define the platform with the argument `platform` to limit the scope. The available platforms are [the same values](https://nodejs.org/api/os.html#osplatform) available in `os.platform()`.
 
 ```js
 const { isNodeVulnerable } = require('is-my-node-vulnerable')
@@ -117,16 +117,16 @@ jobs:
       - name: Check Node.js
         uses: nodejs/is-my-node-vulnerable@v1
         with:
-          node-version: "18.14.1"
+          node-version: "22.15.0"
 ```
 
-Optionally you can define the platform with the argument `platform` to limit the scope. The available platforms are [the same values](https://nodejs.org/api/os.html#osplatform) available in for `os.platform()`.
+Optionally, you can define the platform with the argument `platform` to limit the scope. The available platforms are [the same values](https://nodejs.org/api/os.html#osplatform) available in `os.platform()`.
 
 ```yml
       - uses: actions/checkout@v3
       - name: Check Node.js
         uses: nodejs/is-my-node-vulnerable@v1
         with:
-          node-version: "18.14.1"
+          node-version: "22.15.0"
           platform: "linux"
 ```
