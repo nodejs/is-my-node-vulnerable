@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { isNodeVulnerable } = require('./index')
+const { isNodeVulnerable } = require('./src/index')
 
 async function t () {
   // of course, this test is fragile
