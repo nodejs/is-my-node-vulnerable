@@ -18,7 +18,7 @@
   "author": "RafaelGSS <rafael.nunu@hotmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/RafaelGSS/is-my-node-vulnerable"
+    "url": "https://github.com/nodejs/is-my-node-vulnerable"
   },
   "standard": {
     "ignore": [
