@@ -38,7 +38,7 @@ function loadETag () {
   }
 }
 
-async function fetchJson (obj) {
+async function fetchJson (obj, etag) {
   await new Promise((resolve) => {
     request(obj.url, (res) => {
       if (res.statusCode !== 200) {
@@ -51,6 +51,8 @@ async function fetchJson (obj) {
 
       fileStream.on('finish', () => {
         fileStream.close()
+        obj.etagValue = etag
+        fs.writeFileSync(obj.etagFile, etag)
         resolve()
       })
 
@@ -77,11 +79,9 @@ async function getJson (obj) {
       res.on('data', () => {})
 
       const { etag } = res.headers
-      if (!obj.etagValue || obj.eTagValue !== etag || !fs.existsSync(obj.jsonFile)) {
-        obj.etagValue = etag
-        fs.writeFileSync(obj.etagFile, etag)
+      if (!obj.etagValue || obj.etagValue !== etag || !fs.existsSync(obj.jsonFile)) {
         debug('Creating local core.json')
-        resolve(fetchJson(obj))
+        resolve(fetchJson(obj, etag))
       } else {
         debug(`No updates from upstream. Getting a cached version: ${obj.jsonFile}`)
         resolve(readLocal(obj.jsonFile))
