@@ -14,7 +14,7 @@ if (isOldEnough(process.version)) {
 } else {
   // CLI
   if (require.main === module) {
-    require('./is-vulnerable').cli(process.version, require('os').platform())
+    require('./is-vulnerable').cli(process.version, require('os').platform(), { cache: process.argv.indexOf('--no-cache') === -1 })
   } else {
     module.exports = {
       isNodeVulnerable: require('./is-vulnerable').isNodeVulnerable

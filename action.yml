@@ -14,6 +14,10 @@ inputs:
   platform:
     description: 'Platform to check'
     required: false
+  cache:
+    description: 'Cache vulnerability data on disk. Set to false to avoid filesystem operations'
+    required: false
+    default: 'true'
 
 # https://actions-cool.github.io/github-action-branding/
 branding:

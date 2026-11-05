@@ -12,6 +12,12 @@ npx is-my-node-vulnerable
 
 It's strongly recommended to include this as a step in the app CI.
 
+By default, the vulnerability data is cached on disk. Use `--no-cache` to avoid filesystem operations (e.g. on a read-only filesystem):
+
+```
+npx is-my-node-vulnerable --no-cache
+```
+
 > [!NOTE]
 > For retro-compatibility enthusiasts: This module supports Node.js versions >= v0.12.
 > However, npx does not work with those older versions, so you'll need to install the
@@ -96,6 +102,14 @@ import { isNodeVulnerable } from 'is-my-node-vulnerable'
 await isNodeVulnerable('19.0.0', 'linux') // true
 ```
 
+By default, the vulnerability data is cached on disk. To make the check work in constrained environments (e.g. read-only filesystem), set `cache: false` to avoid filesystem operations. The data is then downloaded on every call.
+
+```js
+import { isNodeVulnerable } from 'is-my-node-vulnerable'
+
+await isNodeVulnerable('19.0.0', 'linux', { cache: false }) // true
+```
+
 [Node.js Security Database]: https://github.com/nodejs/security-wg/tree/main/vuln
 
 
@@ -129,4 +143,15 @@ Optionally, you can define the platform with the argument `platform` to limit th
         with:
           node-version: "22.15.0"
           platform: "linux"
+```
+
+To avoid filesystem operations, set `cache` to `false`:
+
+```yml
+      - uses: actions/checkout@v3
+      - name: Check Node.js
+        uses: nodejs/is-my-node-vulnerable@v1
+        with:
+          node-version: "22.15.0"
+          cache: false
 ```
