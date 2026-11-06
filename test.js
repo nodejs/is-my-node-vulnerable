@@ -39,6 +39,11 @@ async function t () {
   assert.ok(await isNodeVulnerable('18.0.0', 'win32'))
   assert.ok(await isNodeVulnerable('14.0.0', 'android'))
   assert.rejects(() => isNodeVulnerable('20.0.0', 'non-valid-platform'), /platform non-valid-platform is not valid. Please use aix,darwin,freebsd,linux,openbsd,sunos,win32,android/)
+
+  // Without cache (no filesystem operations)
+  assert.ok(await isNodeVulnerable('20.5.0', undefined, { cache: false }))
+  assert.ok(await isNodeVulnerable('17.0.0', undefined, { cache: false })) // EOL
+  assert.ok(await isNodeVulnerable('22.4.0', 'win32', { cache: false }))
 }
 
 t()

@@ -29,7 +29,16 @@ function debug (msg) {
   }
 }
 
+let etagLoaded = false
+
 function loadETag () {
+  if (etagLoaded) {
+    return
+  }
+  etagLoaded = true
+  if (process.argv[2] === '-r') {
+    return
+  }
   for (const [key, obj] of Object.entries(STORE)) {
     if (fs.existsSync(obj.etagFile)) {
       debug(`Loading local ETag for '${key}'`)
@@ -68,7 +77,39 @@ async function fetchJson (obj, etag) {
   return readLocal(obj.jsonFile)
 }
 
-async function getJson (obj) {
+async function fetchJsonInMemory (obj) {
+  return new Promise((resolve, reject) => {
+    request(obj.url, (res) => {
+      if (res.statusCode !== 200) {
+        console.error(`Request to Github returned http status ${res.statusCode}. Aborting...`)
+        process.nextTick(() => { process.exit(1) })
+        return
+      }
+
+      const chunks = []
+      res.on('data', (chunk) => { chunks.push(chunk) })
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(Buffer.concat(chunks).toString()))
+        } catch (err) {
+          reject(new Error(`Could not parse JSON from ${obj.url}: ${err.message}`))
+        }
+      })
+    }).on('error', (err) => {
+      console.error(`Request to Github returned error ${err.message}. Aborting...`)
+      process.nextTick(() => { process.exit(1) })
+    }).end()
+  })
+}
+
+async function getJson (obj, options = {}) {
+  if (options.cache === false) {
+    debug(`Cache disabled. Fetching ${obj.url} in memory`)
+    return fetchJsonInMemory(obj)
+  }
+
+  loadETag()
+
   return new Promise((resolve) => {
     request(obj.url, { method: 'HEAD' }, (res) => {
       if (res.statusCode !== 200) {
@@ -131,17 +172,17 @@ function getVulnerabilityList (currentVersion, data, platform) {
   return list
 }
 
-async function cli (currentVersion, platform) {
+async function cli (currentVersion, platform, options = {}) {
   checkPlatform(platform)
 
-  const isEOL = await isNodeEOL(currentVersion)
+  const isEOL = await isNodeEOL(currentVersion, options)
   if (isEOL) {
     console.error(danger)
     console.error(`${currentVersion} is end-of-life. There are high chances of being vulnerable. Please upgrade it.`)
     process.exit(1)
   }
 
-  const securityJson = await getJson(STORE.security)
+  const securityJson = await getJson(STORE.security, options)
   const list = getVulnerabilityList(currentVersion, securityJson, platform)
 
   if (list.length) {
@@ -154,8 +195,8 @@ async function cli (currentVersion, platform) {
   }
 }
 
-async function getVersionInfo (version) {
-  const scheduleJson = await getJson(STORE.schedule)
+async function getVersionInfo (version, options) {
+  const scheduleJson = await getJson(STORE.schedule, options)
 
   if (scheduleJson[version.toLowerCase()]) {
     return scheduleJson[version.toLowerCase()]
@@ -172,10 +213,11 @@ async function getVersionInfo (version) {
 
 /**
  * @param {string} version
+ * @param {{ cache?: boolean }} [options]
  * @returns {Promise<boolean>} true if the version is end-of-life
  */
-async function isNodeEOL (version) {
-  const myVersionInfo = await getVersionInfo(version)
+async function isNodeEOL (version, options) {
+  const myVersionInfo = await getVersionInfo(version, options)
 
   if (!myVersionInfo) {
     // i.e. isNodeEOL('abcd') or isNodeEOL('lts') or isNodeEOL('99')
@@ -191,20 +233,22 @@ async function isNodeEOL (version) {
   return now > end
 }
 
-async function isNodeVulnerable (version, platform) {
+/**
+ * @param {string} version
+ * @param {string} [platform]
+ * @param {{ cache?: boolean }} [options] set `cache: false` to avoid filesystem operations
+ * @returns {Promise<boolean>} true if the version is vulnerable
+ */
+async function isNodeVulnerable (version, platform, options = {}) {
   checkPlatform(platform)
-  const isEOL = await isNodeEOL(version)
+  const isEOL = await isNodeEOL(version, options)
   if (isEOL) {
     return true
   }
 
-  const coreIndex = await getJson(STORE.security)
+  const coreIndex = await getJson(STORE.security, options)
   const list = getVulnerabilityList(version, coreIndex, platform)
   return list.length > 0
-}
-
-if (process.argv[2] !== '-r') {
-  loadETag()
 }
 
 module.exports = {
