@@ -20,6 +20,8 @@ async function t () {
   assert.ok(await isNodeVulnerable('24.22.0'))
   assert.ok(await isNodeVulnerable('26.12.0'))
 
+  await assert.doesNotReject(() => isNodeVulnerable('27.0.0-alpha.0.0.0'))
+
   assert.rejects(() => isNodeVulnerable('999'), /Could not fetch version information/)
   assert.rejects(() => isNodeVulnerable('Unobtanium'), /Could not fetch version information/) // i.e. not found
 
