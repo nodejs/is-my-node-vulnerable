@@ -120,8 +120,8 @@ function getVulnerabilityList (currentVersion, data, platform) {
 
     if (
       (
-        satisfies(currentVersion, vuln.vulnerable) &&
-        !satisfies(currentVersion, vuln.patched)
+        satisfies(currentVersion, vuln.vulnerable, { includePrerelease: true }) &&
+        !satisfies(currentVersion, vuln.patched, { includePrerelease: true })
       ) && isSystemAffected(platform, vuln.affectedEnvironments)
     ) {
       const severity = vuln.severity === 'unknown' ? '' : `(${vuln.severity})`
@@ -162,7 +162,7 @@ async function getVersionInfo (version) {
   }
 
   for (const [key, value] of Object.entries(scheduleJson)) {
-    if (satisfies(version, key)) {
+    if (satisfies(version, key, { includePrerelease: true })) {
       return value
     }
   }
